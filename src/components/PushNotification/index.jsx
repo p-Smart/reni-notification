@@ -12,6 +12,7 @@ const PushNotification = ({setToken}) => {
         try {
            if(times<5){
             const firebase = await firebaseCloudMessaging.init()
+            console.log('Initialized firebase')
                 if(firebase?.token && firebase?.messaging){
                     console.log('Client Notification Token:', firebase?.token)
                     setToken(firebase?.token)
@@ -23,11 +24,13 @@ const PushNotification = ({setToken}) => {
                     } )
                     return
                 }
+                console.log('Token and Messaging not available, so had to run again')
                 return await fetchClientToken(++times)
            }
            return toast.error('Failed generating token, try again later')
           }
           catch (err) {
+            console.log('Caught error. So had to run again')
             console.log(err.message)
             return await fetchClientToken(++times)
           }
