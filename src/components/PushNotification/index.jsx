@@ -11,21 +11,21 @@ const PushNotification = ({setToken}) => {
     const fetchClientToken = async (times=0) => {
         try {
            if(times<5){
-            const {token, messaging} = await firebaseCloudMessaging.init()
-            if (token) {
-                console.log('Client Notification Token:', token)
-                setToken(token)
-            }
+            const firebase = await firebaseCloudMessaging.init()
+                if(firebase?.token && firebase?.messaging){
+                    console.log('Client Notification Token:', firebase?.token)
+                    setToken(firebase?.token)
 
 
-            onMessage(messaging, (payload) => {
-                console.log('Message from App ', payload)
-                handleShowNotification(payload)
-            } )
+                    onMessage(firebase.messaging, (payload) => {
+                        console.log('Message from App ', payload)
+                        handleShowNotification(payload)
+                    } )
+                    return
+                }
+                return await fetchClientToken(++times)
            }
-           else{
-            toast.error('Failed generating token, try again later')
-           }
+           return toast.error('Failed generating token, try again later')
           }
           catch (err) {
             console.log(err.message)
