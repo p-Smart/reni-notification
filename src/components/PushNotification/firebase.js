@@ -41,6 +41,9 @@ const firebaseCloudMessaging = {
         // Set token in our local storage
         return {token: fcm_token, messaging}
       }
+      else{
+        toast.error('Enable Notifications to use this app!')
+      }
     } catch (error) {
       console.log(error.message)
       return null
