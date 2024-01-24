@@ -8,8 +8,9 @@ import { useNotificationContext } from "@/contexts/notificationContext"
 const PushNotification = ({setToken}) => {
     const {setTokenLoading} = useNotificationContext()
 
-    const fetchClientToken = async () => {
+    const fetchClientToken = async (times=0) => {
         try {
+           if(times<5){
             const {token, messaging} = await firebaseCloudMessaging.init()
             if (token) {
                 console.log('Client Notification Token:', token)
@@ -21,10 +22,14 @@ const PushNotification = ({setToken}) => {
                 console.log('Message from App ', payload)
                 handleShowNotification(payload)
             } )
+           }
+           else{
+            toast.error('Failed generating token, try again later')
+           }
           }
           catch (err) {
-            toast.error(err.message)
-            console.log(err)
+            console.log(err.message)
+            return await fetchClientToken(++times)
           }
           finally{
             setTokenLoading(false)
